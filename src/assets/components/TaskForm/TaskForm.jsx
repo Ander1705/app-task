@@ -1,12 +1,16 @@
 import { useState, useEffect } from "react";
 
+// Componente TaskForm: maneja el formulario para agregar o editar tareas
 function TaskForm({ onSubmit, editingTask, onUpdate }) {
+  // Estados para título, descripción y errores del formulario
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [error, setError] = useState("");
+
+  // Determina si se está editando una tarea
   const isEditing = !!editingTask;
 
-  // Actualizar campos cuando se está editando una tarea
+  // useEffect para rellenar los campos si se está editando una tarea
   useEffect(() => {
     if (editingTask) {
       setTitle(editingTask.title);
@@ -16,35 +20,42 @@ function TaskForm({ onSubmit, editingTask, onUpdate }) {
     }
   }, [editingTask]);
 
+  // Función para limpiar los campos del formulario
   const resetForm = () => {
     setTitle("");
     setDescription("");
     setError("");
   };
 
+  // Maneja el envío del formulario
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    // Validación
+    // Validación: el título no puede estar vacío
     if (!title.trim()) {
       setError("El título es obligatorio");
       return;
     }
 
+    // Si se está editando, se actualiza la tarea
     if (isEditing) {
       onUpdate(editingTask.id, { title, description });
     } else {
+      // Si no, se crea una nueva tarea
       onSubmit(title, description);
     }
 
+    // Limpiar el formulario después de enviar
     resetForm();
   };
 
   return (
     <div>
+      {/* Título del formulario que cambia según el modo (editar o crear) */}
       <h2 className="text-2xl font-bold text-indigo-700 mb-6 flex items-center">
         {isEditing ? (
           <>
+            {/* Ícono de edición */}
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className="h-6 w-6 mr-2"
@@ -63,6 +74,7 @@ function TaskForm({ onSubmit, editingTask, onUpdate }) {
           </>
         ) : (
           <>
+            {/* Ícono de agregar */}
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className="h-6 w-6 mr-2"
@@ -82,8 +94,10 @@ function TaskForm({ onSubmit, editingTask, onUpdate }) {
         )}
       </h2>
 
+      {/* Formulario */}
       <form onSubmit={handleSubmit} className="space-y-5">
         <div>
+          {/* Campo de título */}
           <label
             htmlFor="title"
             className="block text-sm font-medium text-gray-700 mb-1"
@@ -96,13 +110,14 @@ function TaskForm({ onSubmit, editingTask, onUpdate }) {
             value={title}
             onChange={(e) => {
               setTitle(e.target.value);
-              if (e.target.value.trim()) setError("");
+              if (e.target.value.trim()) setError(""); // Borra error si se escribe algo
             }}
             className={`w-full px-4 py-3 rounded-lg border ${
               error ? "border-red-300 ring-1 ring-red-300" : "border-gray-300"
             } focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all`}
             placeholder="¿Qué necesitas hacer?"
           />
+          {/* Mostrar mensaje de error si el título está vacío */}
           {error && (
             <p className="mt-1 text-sm text-red-600 flex items-center">
               <svg
@@ -125,6 +140,7 @@ function TaskForm({ onSubmit, editingTask, onUpdate }) {
         </div>
 
         <div>
+          {/* Campo de descripción */}
           <label
             htmlFor="description"
             className="block text-sm font-medium text-gray-700 mb-1"
@@ -141,6 +157,7 @@ function TaskForm({ onSubmit, editingTask, onUpdate }) {
           ></textarea>
         </div>
 
+        {/* Botones de acción: añadir/actualizar o cancelar */}
         <div className="flex space-x-3 pt-2">
           <button
             type="submit"
@@ -154,6 +171,7 @@ function TaskForm({ onSubmit, editingTask, onUpdate }) {
           >
             {isEditing ? (
               <>
+                {/* Ícono actualizar */}
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   className="h-5 w-5 mr-1"
@@ -172,6 +190,7 @@ function TaskForm({ onSubmit, editingTask, onUpdate }) {
               </>
             ) : (
               <>
+                {/* Ícono añadir */}
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   className="h-5 w-5 mr-1"
@@ -191,6 +210,7 @@ function TaskForm({ onSubmit, editingTask, onUpdate }) {
             )}
           </button>
 
+          {/* Botón cancelar visible solo si se está editando */}
           {isEditing && (
             <button
               type="button"
